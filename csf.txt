@@ -1,0 +1,8 @@
+159.122.166.5 # lfd: (sshd) Failed SSH login from 159.122.166.5 (US/United States/5.a6.7a9f.ip4.static.sl-reverse.com): 5 in the last 3600 secs - Mon Nov 20 19:27:31 2017
+201.178.183.96 # lfd: (sshd) Failed SSH login from 201.178.183.96 (AR/Argentina/201-178-183-96.speedy.com.ar): 5 in the last 3600 secs - Mon Nov 20 20:13:23 2017
+210.212.241.35 # lfd: 210.212.241.35 (IN/India/-), 6 distributed sshd attacks on account [root] in the last 3600 secs - Mon Nov 20 20:29:03 2017
+186.210.34.179 # lfd: (sshd) Failed SSH login from 186.210.34.179 (BR/Brazil/186-210-034-179.xd-dynamic.algarnetsuper.com.br): 5 in the last 3600 secs - Mon Nov 20 20:47:23 2017
+211.111.250.183 # lfd: 211.111.250.183 (KR/Korea, Republic of/-), 6 distributed sshd attacks on account [root] in the last 3600 secs - Mon Nov 20 21:04:23 2017
+191.232.36.112 # lfd: (sshd) Failed SSH login from 191.232.36.112 (BR/Brazil/-): 5 in the last 3600 secs - Mon Nov 20 21:28:43 2017
+103.79.141.150 # lfd: (sshd) Failed SSH login from 103.79.141.150 (VN/Vietnam/-): 5 in the last 3600 secs - Mon Nov 20 21:42:03 2017
+188.16.68.9 # lfd: (sshd) Failed SSH login from 188.16.68.9 (RU/Russian Federation/-): 5 in the last 3600 secs - Mon Nov 20 22:13:01 2017
