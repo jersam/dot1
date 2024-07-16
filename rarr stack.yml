@@ -1,0 +1,162 @@
+---
+services:
+
+#radarr
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /dockerfiles/radarr/data:/config
+      - /mnt/media/Movies:/movies #optional
+      - /mnt/media/Downloads:/downloads #optional
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+# sonarr
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /dockerfiles/sonarr/data:/config
+      - /mnt/media/TV:/tv #optional
+      - /mnt/media/Downloads:/downloads #optional
+    ports:
+      - 8989:8989
+    restart: unless-stopped	
+
+# lidarr
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /dockerfiles/lidarr/config:/config
+      - /mnt/media/Music:/music #optional
+      - /mnt/media/Downloads:/downloads #optional
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+
+# overseerr
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /dockerfiles/overseerr/config:/app/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
+# prowlarr
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /dockerfiles/prowlarr/data:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+# recyclarr
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    user: 1000:1000
+    volumes:
+      - /dockerfiles/recyclarr/data:/config
+    environment:
+      - TZ=Etc/UTC
+
+# qbittorrent
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    network_mode: "container:gluetun"
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - /dockerfiles/qbittorrent/appdata:/config
+      - /mnt/media/Downloads:/downloads #optional
+    #ports:
+    #  - 8080:8080
+    #  - 6881:6881
+    #  - 6881:6881/udp
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+# flaresolverr
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    network_mode: "container:gluetun"
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Etc/UTC
+    volumes:
+      - /dockerfiles/flaresolverr/data:/config
+    # ports:
+    #   - "${PORT:-8191}:8191"
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+# gluetun nordvpn
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 8080:8080/tcp # qBittorrent
+      - 8191:8191/tcp # flaresolverr
+      - 6881:6881/tcp # bit tcp
+      - 6881:6881/udp # bit udp
+    volumes:
+      - /dockerfiles/gluetun/data:/gluetun
+    environment:
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=xxxx
+      - OPENVPN_PASSWORD=xxxx
+      - TZ=Etc/UTC
+      - SERVER_COUNTRIES="United States"
+      - SERVER_CATEGORIES=P2P
+      - HTTPPROXY=on
+      - HTTPPROXY_USER=xxxx
+      - HTTPPROXY_PASSWORD=xxxx
